@@ -6,13 +6,11 @@ use leptos_router::*;
 use leptos_axum::redirect;
 
 #[component]
-pub fn App(cx: Scope) -> impl IntoView {
+pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
-    provide_meta_context(cx);
+    provide_meta_context();
 
     view! {
-        cx,
-
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
         <Stylesheet id="leptos" href="/pkg/start-axum.css"/>
@@ -24,8 +22,8 @@ pub fn App(cx: Scope) -> impl IntoView {
         <Router>
             <main>
                 <Routes>
-                    <Route path="" view=|cx| view! { cx, <HomePage/> }/>
-                    <Route path="/page2" view=|cx| view! { cx, <Page2/> }/>
+                    <Route path="" view=|| view! {<HomePage/> }/>
+                    <Route path="/page2" view=|| view! {<Page2/> }/>
                 </Routes>
             </main>
         </Router>
@@ -34,10 +32,10 @@ pub fn App(cx: Scope) -> impl IntoView {
 
 /// Renders the home page of your application.
 #[component]
-fn HomePage(cx: Scope) -> impl IntoView {
-    let go_page2 = create_server_action::<GoPage2>(cx);
+fn HomePage() -> impl IntoView {
+    let go_page2 = create_server_action::<GoPage2>();
 
-    view! { cx,
+    view! {
         <h1>"Welcome to Leptos!"</h1>
         <ActionForm action=go_page2>
             <input type="submit" value="Go to Page2"/>
@@ -47,10 +45,10 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
 /// Renders page2 of your application.
 #[component]
-fn Page2(cx: Scope) -> impl IntoView {
-    let go_home = create_server_action::<GoHome>(cx);
+fn Page2() -> impl IntoView {
+    let go_home = create_server_action::<GoHome>();
 
-    view! { cx,
+    view! {
         <h1>"Welcome to Page2"</h1>
         <ActionForm action=go_home>
             <input type="submit" value="Go to /"/>
@@ -59,13 +57,13 @@ fn Page2(cx: Scope) -> impl IntoView {
 }
 
 #[server(GoHome, "/api")]
-pub async fn go_home(cx: Scope) -> Result<(), ServerFnError> {
-    redirect(cx, "/");
+pub async fn go_home() -> Result<(), ServerFnError> {
+    redirect("/");
     Ok(())
 }
 
 #[server(GoPage2, "/api")]
-pub async fn go_page2(cx: Scope) -> Result<(), ServerFnError> {
-    redirect(cx, "/page2");
+pub async fn go_page2() -> Result<(), ServerFnError> {
+    redirect("/page2");
     Ok(())
 }
